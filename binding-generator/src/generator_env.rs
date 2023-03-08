@@ -196,7 +196,11 @@ impl<'tu> GeneratorEnv<'tu> {
 					.expect("Can't seek export macro file");
 				let mut buf = [0; 8];
 				let read = f.read(&mut buf).expect("Can't read file");
-				let line_offset = buf[0..read].iter().take_while(|&&c| c == b'\n').count();
+				let line_offset = buf[0..read]
+					.iter()
+					.filter(|&&c| c != b'\r')
+					.take_while(|&&c| c == b'\n')
+					.count();
 				if line_offset > 1 {
 					panic!(
 						"Line offset more than 1 is not supported, modify fuzzy_key in get_export_config() to support higher values"
